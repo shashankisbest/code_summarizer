@@ -1,0 +1,48 @@
+CODE SUMMARY REPORT
+======================================================================
+
+
+
+---->PURPOSE<----
+   None
+
+
+
+---->STATISTICS<----
+   - Functions: 4
+   - Classes: 1
+   - Imports: 1
+
+
+
+---->COMPLEXITY ANALYSIS<----
+   - Conditional statements (if): 0
+   - Loops (for/while): 1
+   - Exception handling (try/except): 1
+
+
+
+---->DEPENDENCIES<----
+   - os
+
+
+
+---->CLASSES<----
+   • the classFileAnalyzer exists with 2 methods inside it named ['__init__', 'analyze']
+
+
+
+---->FUNCTIONS<----
+   • the function read_file operates on ['filepath']
+   • the function count_words operates on ['lines']
+   • the function __init__ operates on ['self', 'filepath']
+   • the function analyze operates on ['self']
+
+
+
+---->🔒 AUDIT NOTES<----
+   - Code interacts with the operating system - verify file path handling
+
+
+
+======================================================================

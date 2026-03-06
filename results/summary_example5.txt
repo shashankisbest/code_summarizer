@@ -1,0 +1,56 @@
+CODE SUMMARY REPORT
+======================================================================
+
+
+
+---->PURPOSE<----
+   None
+
+
+
+---->STATISTICS<----
+   - Functions: 12
+   - Classes: 1
+   - Imports: 1
+
+
+
+---->COMPLEXITY ANALYSIS<----
+   - Conditional statements (if): 4
+   - Loops (for/while): 4
+   - Exception handling (try/except): 1
+
+
+
+---->DEPENDENCIES<----
+   - json
+
+
+
+---->CLASSES<----
+   • the classStudentManager exists with 5 methods inside it named ['__init__', 'add', 'get_topper', 'get_passed', 'display_all']
+
+
+
+---->FUNCTIONS<----
+   • the function load_students operates on ['filename']
+   • the function save_students operates on ['filename', 'students']
+   • the function add_student operates on ['students', 'name', 'age', 'marks']
+   • the function calculate_average operates on ['marks']
+   • the function find_top_student operates on ['students']
+   • the function filter_passed_students operates on ['students', 'passing_marks']
+   • the function main operates on no parameters. 
+   • the function __init__ operates on ['self', 'filename']
+   • the function add operates on ['self', 'name', 'age', 'marks']
+   • the function get_topper operates on ['self']
+   • the function get_passed operates on ['self']
+   • the function display_all operates on ['self']
+
+
+
+---->🔒 AUDIT NOTES<----
+   - No obvious security concerns detected in imports
+
+
+
+======================================================================

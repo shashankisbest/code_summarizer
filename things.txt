@@ -1,0 +1,24 @@
+conda activate "./venv"
+
+chat 1 start:
+okay, lets assume I get 35, Tell me how to get started, a full roadmap kindof thingy
+
+chat 2 start:
+<from start>
+
+
+
+
+ast - generates ast
+astor - converts ast back to source code
+
+ntlk: 
+Context-Free Grammar (CFG)
+
+Parse trees
+
+Recursive descent / chart parsers
+
+Tree visualization
+
+This covers Syntax Analysis and can visually show parse trees

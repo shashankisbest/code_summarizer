@@ -1,0 +1,98 @@
+======================================================================
+🤖 ML-BASED CODE SUMMARY
+======================================================================
+
+File: C:\SHASHANK\CD\Project\src\ml_summarizer.py
+
+📋 ML-GENERATED SUMMARY:
+   MLCodeSummarizer: """ uses pre-trained transformer models to generate intelligent code summaries. "salesforce/codet5-small" (larger, better quality, slower) - "microsoft-codebert-base"
+
+
+----------------------------------------------------------------------
+📋 TEMPLATE-BASED ANALYSIS (for comparison):
+----------------------------------------------------------------------
+CODE SUMMARY REPORT
+======================================================================
+
+
+
+---->PURPOSE<----
+   None
+
+
+
+---->STATISTICS<----
+   - Functions: 5
+   - Classes: 1
+   - Imports: 5
+
+
+
+---->COMPLEXITY ANALYSIS<----
+   - Conditional statements (if): 7
+   - Loops (for/while): 0
+   - Exception handling (try/except): 2
+
+
+
+---->DEPENDENCIES<----
+   - transformers.AutoTokenizer
+   - transformers.AutoModelForSeq2SeqLM
+   - transformers.pipeline
+   - torch
+   - ast_extractor.ASTExtractor
+
+
+
+---->CLASSES<----
+   • the classMLCodeSummarizer exists with 5 methods inside it named ['__init__', 'summarize_code_snippet', 'summarize_function', 'summarize_class', 'summarize_entire_file']
+
+
+
+---->FUNCTIONS<----
+   • the function __init__ : Initialize the ML summarizer with a pre-trained model.
+
+Models we can use:
+- "Salesforce/codet5-small" (recommended - fast, good quality)
+- "Salesforce/codet5-base" (larger, better quality, slower)
+- "microsoft/codebert-base" (alternative)
+   • the function summarize_code_snippet : Generate a summary for a code snippet using the ML model.
+
+Args:
+    code_text: The source code to summarize
+    max_length: Maximum length of generated summary
+    
+Returns:
+    Generated summary string
+   • the function summarize_function : Summarize a single function using ML.
+
+Args:
+    func_code: The function's source code
+    func_name: Optional function name for context
+    
+Returns:
+    ML-generated summary
+   • the function summarize_class : Summarize a class using ML.
+
+Args:
+    class_code: The class's source code
+    class_name: Optional class name for context
+    
+Returns:
+    ML-generated summary
+   • the function summarize_entire_file : Generate a high-level summary of the entire file.
+
+Args:
+    source_code: Complete source code
+    
+Returns:
+    File-level summary
+
+
+
+---->🔒 AUDIT NOTES<----
+   - No obvious security concerns detected in imports
+
+
+
+======================================================================

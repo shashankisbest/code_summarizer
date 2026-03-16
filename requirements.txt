@@ -5,3 +5,7 @@ transformers
 torch
 sentencepiece
 protobuf
+
+# testing framework
+pytest
+pytest-cov

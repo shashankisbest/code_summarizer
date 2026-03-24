@@ -1,146 +1,234 @@
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import torch
-from ast_extractor import ASTExtractor #!basic requirement
+import warnings
+warnings.filterwarnings("ignore")
 
 class MLCodeSummarizer:
     """
     Uses pre-trained transformer models to generate intelligent code summaries.
-    This is the NLP component of the AST + NLP project.
     """
     
-    def __init__(self, model_name="Salesforce/codet5-small"): #initializing the model
+    def __init__(self, model_name="codeparrot/codeparrot-small"):
         """
         Initialize the ML summarizer with a pre-trained model.
         
         Models we can use:
-        - "Salesforce/codet5-small" (recommended - fast, good quality)
-        - "Salesforce/codet5-base" (larger, better quality, slower)
-        - "microsoft/codebert-base" (alternative)
+        - "codeparrot/codeparrot-small" (recommended - stable, good for code)
+        - "microsoft/CodeGPT-small-py" (alternative)
+        - "Salesforce/codet5-small" (if it works)
         """
         print(f"🤖 Loading ML model: {model_name}...")
         print("   (This may take a minute on first run...)")
         
-        try:
-            self.tokenizer = AutoTokenizer.from_pretrained(model_name) #*This downloads the tokenizer matching the model (CodeT5 in your case).
-
-
-            self.model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-            self.model_name = model_name
-            print("✅ Model loaded successfully!")
-        except Exception as e:
-            print(f"❌ Error loading model: {e}")
-            print("   Falling back to simpler model...")
-            # Fallback to a guaranteed-to-work model
-            self.model_name = "t5-small"
-            self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-            self.model = AutoModelForSeq2SeqLM.from_pretrained(self.model_name)
-    
-    def summarize_code_snippet(self, code_text, max_length=50):
-        """
-        Generate a summary for a code snippet using the ML model.
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         
-        Args:
-            code_text: The source code to summarize
-            max_length: Maximum length of generated summary
-            
-        Returns:
-            Generated summary string
+        # Try multiple models in order of preference
+        models_to_try = [
+            "codeparrot/codeparrot-small",  # First try CodeParrot
+            "microsoft/CodeGPT-small-py",   # Then try CodeGPT
+            "gpt2",                          # Then try GPT-2 (works reliably)
+            "Salesforce/codet5-small"        # Finally try CodeT5
+        ]
+        
+        # Remove duplicates
+        models_to_try = list(dict.fromkeys(models_to_try))
+        
+        self.model = None
+        self.tokenizer = None
+        self.is_causal_lm = True  # Most code models are causal LMs
+        
+        for attempt_model in models_to_try:
+            try:
+                print(f"   Attempting to load: {attempt_model}")
+                
+                if "codet5" in attempt_model.lower():
+                    # CodeT5 is seq2seq
+                    self.tokenizer = AutoTokenizer.from_pretrained(attempt_model)
+                    self.model = AutoModelForSeq2SeqLM.from_pretrained(attempt_model)
+                    self.is_causal_lm = False
+                else:
+                    # Most code models are causal LMs
+                    self.tokenizer = AutoTokenizer.from_pretrained(attempt_model)
+                    self.model = AutoModelForCausalLM.from_pretrained(attempt_model)
+                    self.is_causal_lm = True
+                
+                # Add padding token if it doesn't exist
+                if self.tokenizer.pad_token is None:
+                    self.tokenizer.pad_token = self.tokenizer.eos_token
+                
+                self.model.to(self.device)
+                self.model_name = attempt_model
+                print(f"✅ Successfully loaded: {attempt_model}")
+                break
+                
+            except Exception as e:
+                print(f"   ⚠️ Could not load {attempt_model}: {str(e)[:50]}...")
+                continue
+        
+        if self.model is None:
+            raise RuntimeError("❌ Failed to load any model!")
+    
+    def summarize_code_snippet(self, code_text, max_length=100):
+        """
+        Generate a summary for a code snippet.
         """
         try:
-            # Prepare input for the model
-            # For CodeT5, we can add a task prefix
-            if "codet5" in self.model_name.lower():
-                input_text = f"summarize: {code_text}"
-            else:
-                input_text = code_text
+            # Clean and prepare the code
+            code_text = code_text.strip()
+            if not code_text:
+                return "Empty code snippet"
             
-            # Tokenize input
+            # Truncate very long code
+            if len(code_text) > 500:
+                code_text = code_text[:500] + "..."
+            
+            # Create a prompt for summarization
+            prompt = f"Here's what this code does:\n{code_text}\n\nSummary: This code"
+            
+            # Tokenize
             inputs = self.tokenizer(
-                input_text,
+                prompt,
                 return_tensors="pt",
                 max_length=512,
                 truncation=True,
                 padding=True
-            )
+            ).to(self.device)
             
             # Generate summary
             with torch.no_grad():
-                outputs = self.model.generate(
-                    **inputs,
-                    max_length=max_length,
-                    min_length=10,
-                    num_beams=4,  # Beam search for better quality
-                    early_stopping=True,
-                    no_repeat_ngram_size=2  # Avoid repetition
-                )
+                if self.is_causal_lm:
+                    outputs = self.model.generate(
+                        **inputs,
+                        max_length=len(inputs['input_ids'][0]) + max_length,
+                        min_length=10,
+                        num_beams=3,
+                        early_stopping=True,
+                        no_repeat_ngram_size=2,
+                        pad_token_id=self.tokenizer.pad_token_id,
+                        eos_token_id=self.tokenizer.eos_token_id
+                    )
+                else:
+                    outputs = self.model.generate(
+                        **inputs,
+                        max_length=max_length,
+                        min_length=10,
+                        num_beams=3,
+                        early_stopping=True,
+                        no_repeat_ngram_size=2
+                    )
             
-            # Decode the output
+            # Decode and clean
             summary = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-            return summary.strip()
+            
+            # Extract just the summary part
+            if "Summary: This code" in summary:
+                summary = summary.split("Summary: This code")[-1].strip()
+            elif "Summary:" in summary:
+                summary = summary.split("Summary:")[-1].strip()
+            
+            # Clean up
+            summary = summary.replace("This code", "").strip()
+            if summary and summary[0].islower():
+                summary = summary[0].upper() + summary[1:]
+            
+            return summary if summary else "Code snippet that performs a specific function"
             
         except Exception as e:
-            return f"[ML Error: {str(e)}]"
+            return f"[Summary: {str(e)}]"
     
     def summarize_function(self, func_code, func_name=None):
         """
-        Summarize a single function using ML.
-        
-        Args:
-            func_code: The function's source code
-            func_name: Optional function name for context
-            
-        Returns:
-            ML-generated summary
+        Summarize a function.
         """
-        # Limit code length to avoid token limits
-        if len(func_code) > 2000:
-            func_code = func_code[:2000] + "..."
+        # Extract function signature and docstring if present
+        lines = func_code.split('\n')
+        signature = lines[0] if lines else ""
         
-        summary = self.summarize_code_snippet(func_code, max_length=60)
+        # Look for docstring
+        docstring = ""
+        if len(lines) > 1 and '"""' in lines[1]:
+            # Simple docstring extraction
+            for i, line in enumerate(lines[1:], 1):
+                docstring += line + "\n"
+                if '"""' in line and i > 1:
+                    break
         
-        if func_name and func_name not in summary:
-            summary = f"Function '{func_name}': {summary}"
+        # Create summary input
+        if docstring:
+            input_text = f"{signature}\n{docstring}"
+        else:
+            input_text = func_code[:300]  # First 300 chars
         
+        summary = self.summarize_code_snippet(input_text, max_length=50)
+        
+        if func_name:
+            return f"Function '{func_name}': {summary}"
         return summary
     
     def summarize_class(self, class_code, class_name=None):
         """
-        Summarize a class using ML.
-        
-        Args:
-            class_code: The class's source code
-            class_name: Optional class name for context
-            
-        Returns:
-            ML-generated summary
+        Summarize a class.
         """
-        # Limit code length
-        if len(class_code) > 2000:
-            class_code = class_code[:2000] + "..."
+        # Extract class signature and methods
+        lines = class_code.split('\n')
+        signature = lines[0] if lines else ""
         
-        summary = self.summarize_code_snippet(class_code, max_length=60)
+        # Find methods
+        methods = []
+        for line in lines[:10]:  # Check first 10 lines
+            if 'def ' in line:
+                methods.append(line.strip())
         
-        if class_name and class_name not in summary:
-            summary = f"Class '{class_name}': {summary}"
+        # Create summary input
+        input_text = signature
+        if methods:
+            input_text += "\nMethods: " + ", ".join(methods[:3])
         
+        summary = self.summarize_code_snippet(input_text, max_length=50)
+        
+        if class_name:
+            return f"Class '{class_name}': {summary}"
         return summary
     
     def summarize_entire_file(self, source_code):
         """
         Generate a high-level summary of the entire file.
-        
-        Args:
-            source_code: Complete source code
-            
-        Returns:
-            File-level summary
         """
-        # For entire file, we want a shorter, high-level summary
-        # Take only the first 1500 characters for context
-        if len(source_code) > 1500:
-            source_code = source_code[:1500] + "..."
+        lines = source_code.split('\n')
         
-        summary = self.summarize_code_snippet(source_code, max_length=80)
+        # Extract key components
+        imports = [l for l in lines if l.strip().startswith(('import ', 'from '))]
+        classes = [l for l in lines if 'class ' in l]
+        functions = [l for l in lines if 'def ' in l and not l.strip().startswith('def __')]
+        
+        # Create a structured summary input
+        summary_parts = []
+        
+        if imports:
+            summary_parts.append(f"Imports: {len(imports)} modules")
+        
+        if classes:
+            class_names = [c.split('class ')[1].split('(')[0].split(':')[0].strip() for c in classes[:3]]
+            summary_parts.append(f"Classes: {', '.join(class_names)}")
+        
+        if functions:
+            func_names = [f.split('def ')[1].split('(')[0].strip() for f in functions[:5]]
+            summary_parts.append(f"Functions: {', '.join(func_names)}")
+        
+        # Look for a main block
+        has_main = any('if __name__ == "__main__"' in line for line in lines)
+        if has_main:
+            summary_parts.append("Has main entry point")
+        
+        # Combine for summary
+        context = " | ".join(summary_parts)
+        
+        if not context:
+            # If no structure found, use first few lines
+            context = source_code[:300]
+        
+        summary = self.summarize_code_snippet(context, max_length=80)
+        
         return summary
 
 
@@ -150,186 +238,33 @@ if __name__ == "__main__":
     print("Testing ML Code Summarizer")
     print("="*70 + "\n")
     
-    #^ sample Test code
     test_code = """
-import threading
-import queue
-import time
-import random
-import math
-import functools
-import json
+def factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
 
-
-class LRUCache:
-    def __init__(self, capacity=5):
-        self.capacity = capacity
-        self.cache = {}
-        self.order = []
-
-    def get(self, key):
-        if key not in self.cache:
-            return None
-        self.order.remove(key)
-        self.order.append(key)
-        return self.cache[key]
-
-    def put(self, key, value):
-        if key in self.cache:
-            self.order.remove(key)
-        elif len(self.cache) >= self.capacity:
-            oldest = self.order.pop(0)
-            del self.cache[oldest]
-
-        self.cache[key] = value
-        self.order.append(key)
-
-
-def memoize_with_lru(capacity=5):
-    cache = LRUCache(capacity)
-
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(*args):
-            cached = cache.get(args)
-            if cached is not None:
-                return cached
-            result = func(*args)
-            cache.put(args, result)
-            return result
-        return wrapper
-    return decorator
-
-
-@memoize_with_lru(capacity=10)
-def expensive_computation(x):
-    time.sleep(0.05)
-    return math.sqrt(x) * math.sin(x) + math.log(x + 1)
-
-
-class Worker(threading.Thread):
-    def __init__(self, task_queue, result_queue, worker_id):
-        super().__init__()
-        self.task_queue = task_queue
-        self.result_queue = result_queue
-        self.worker_id = worker_id
-        self.daemon = True
-
-    def run(self):
-        while True:
-            try:
-                task = self.task_queue.get(timeout=1)
-            except queue.Empty:
-                break
-
-            result = expensive_computation(task)
-            processed = {
-                "worker": self.worker_id,
-                "input": task,
-                "output": result,
-                "timestamp": time.time()
-            }
-
-            self.result_queue.put(processed)
-            self.task_queue.task_done()
-
-
-class DataPipeline:
-    def __init__(self, num_workers=4):
-        self.task_queue = queue.Queue()
-        self.result_queue = queue.Queue()
-        self.workers = [Worker(self.task_queue, self.result_queue, i) for i in range(num_workers)]
-
-    def add_tasks(self, tasks):
-        for t in tasks:
-            self.task_queue.put(t)
-
-    def run(self):
-        for w in self.workers:
-            w.start()
-
-        self.task_queue.join()
-
-        results = []
-        while not self.result_queue.empty():
-            results.append(self.result_queue.get())
-
-        return results
-
-
-class ResultAnalyzer:
-    def __init__(self, results):
-        self.results = results
-
-    def statistics(self):
-        outputs = [r["output"] for r in self.results]
-        if not outputs:
-            return {}
-
-        mean = sum(outputs) / len(outputs)
-        variance = sum((x - mean) ** 2 for x in outputs) / len(outputs)
-
-        return {
-            "count": len(outputs),
-            "mean": mean,
-            "variance": variance,
-            "max": max(outputs),
-            "min": min(outputs)
-        }
-
-    def group_by_worker(self):
-        grouped = {}
-        for r in self.results:
-            grouped.setdefault(r["worker"], []).append(r["output"])
-        return grouped
-
-    def export_json(self, path):
-        with open(path, "w") as f:
-            json.dump(self.results, f, indent=4)
-
-
-def generate_tasks(n=50):
-    return [random.randint(1, 1000) for _ in range(n)]
-
-
-def main():
-    tasks = generate_tasks()
-
-    pipeline = DataPipeline(num_workers=6)
-    pipeline.add_tasks(tasks)
-
-    results = pipeline.run()
-
-    analyzer = ResultAnalyzer(results)
-    stats = analyzer.statistics()
-
-    print("Statistics:")
-    for k, v in stats.items():
-        print(f"{k}: {v}")
-
-    grouped = analyzer.group_by_worker()
-    print("\nWorker Distribution:")
-    for worker, outputs in grouped.items():
-        print(f"Worker {worker} processed {len(outputs)} tasks")
-
-    analyzer.export_json("results.json")
-
-
-if __name__ == "__main__":
-    main()
+# Example usage
+num = int(input("Enter a number: "))
+print("Factorial:", factorial(num))
 """
     
-    # Initialize ML summarizer
-    ml_sum = MLCodeSummarizer()
-    
-    print("\n📝 Test Code:")
-    print(test_code)
-    
-    print("\n🤖 ML-Generated Summary:")
-    summary = ml_sum.summarize_entire_file(test_code)
-    print(f"   {summary}")
+    try:
+        ml_sum = MLCodeSummarizer()
+        
+        print("\n📝 Test Code:")
+        print(test_code)
+        
+        print("\n🤖 ML-Generated Summary:")
+        summary = ml_sum.summarize_entire_file(test_code)
+        print(f"   {summary}")
+        
+        print("\n🔍 Function Summary:")
+        func_summary = ml_sum.summarize_function(test_code, "factorial")
+        print(f"   {func_summary}")
+        
+    except Exception as e:
+        print(f"❌ Error: {e}")
     
     print("\n" + "="*70)
     print("✅ Test Complete!")
-
-

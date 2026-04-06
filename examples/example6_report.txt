@@ -1,0 +1,51 @@
+======================================================================
+🔍 CODE ANALYSIS REPORT
+======================================================================
+
+📋 SUMMARY
+----------------------------------------------------------------------
+This code can be used in conjunction with the data_cache decorator.
+
+Code info: a Python code description. Complete the sentence to describe what this code does.
+
+Code info: a Python module with these components:
+    - Functions: memoize_with_lru
+    - Classes: LRUCache
+    - Imports: threading, que...
+
+📊 STATISTICS
+----------------------------------------------------------------------
+   - Functions: 18
+   - Classes: 4
+   - Imports: 7
+   - Lines of Code: 165
+
+⚙️ COMPLEXITY ANALYSIS
+----------------------------------------------------------------------
+   - Cyclomatic Complexity: 15
+   - Cognitive Complexity: 47
+   - Maintainability Index: 70.8
+   - Level: HIGH
+
+🔧 FUNCTIONS
+----------------------------------------------------------------------
+   • memoize_with_lru(capacity)
+   • expensive_computation(x)
+   • generate_tasks(n)
+   • main()
+   • __init__(self, capacity)
+   • get(self, key)
+   • put(self, key, value)
+   • decorator(func)
+   • __init__(self, task_queue, result_queue, ...)
+   • run(self)
+   ... and 8 more functions
+
+🔒 SECURITY AUDIT
+----------------------------------------------------------------------
+   Security Score: 97/100
+
+   💡 Recommendations:
+      • Medium-risk operations found: open, open. Ensure proper error handling and access controls.
+
+======================================================================

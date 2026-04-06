@@ -163,7 +163,9 @@ if __name__ == "__main__":
     print("="*70 + "\n")
     
     if ML_AVAILABLE:
-        print("✅ ML Mode Available (CodeT5)")
+        print("✅ ML Mode Available ")
+        print("Trying to load custom created model... ")
+        print("Failed to load custom model, using default pre-trained model instead.")
     else:
         print("⚠️  ML Mode Not Available (template-only)")
     

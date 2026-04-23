@@ -1,0 +1,235 @@
+(C:\SHASHANK\CD\Project\venv) PS C:\SHASHANK\CD\Project\src2> python main.py
+
+======================================================================
+🔍 HYBRID CODE SUMMARIZER
+   AST Analysis + ML Generation
+======================================================================
+
+🤖 Initializing Hybrid Summarizer...
+   Using device: cpu
+   Loading: t5-small
+Loading weights: 100%|█████████████████████████████████████████████████████████████████| 131/131 [00:00<00:00, 2166.06it/s, Materializing param=shared.weight]
+   ✅ Successfully loaded: t5-small
+✅ ML Model loaded successfully!
+
+What do you want to do?
+  (1) Summarize a file [Template-based]
+  (2) Summarize a file [ML-based]
+  (3) Summarize a directory [Template-based]
+  (4) Summarize a directory [ML-based]
+  (5) Exit
+
+Enter your choice: 1
+Enter file path: C:\SHASHANK\CD\Project\examples\example7.py
+
+======================================================================
+🔍 Analyzing code with AST...
+🔒 Scanning for security issues...
+📝 Generating summary...
+📊 Creating final report...
+======================================================================
+🔍 CODE ANALYSIS REPORT
+======================================================================
+
+📋 SUMMARY
+----------------------------------------------------------------------
+A Python module that contains 1 function and low complexity and mathematical calculations.
+
+📊 STATISTICS
+----------------------------------------------------------------------
+   - Functions: 1
+   - Classes: 0
+   - Imports: 0
+   - Lines of Code: 11
+
+⚙️ COMPLEXITY ANALYSIS
+----------------------------------------------------------------------
+   - Cyclomatic Complexity: 5
+   - Cognitive Complexity: 3
+   - Maintainability Index: 100.0
+   - Level: LOW
+
+🔧 FUNCTIONS
+----------------------------------------------------------------------
+   • factorial(n)
+
+🔒 SECURITY AUDIT
+----------------------------------------------------------------------
+   Security Score: 100/100
+
+======================================================================
+
+💾 Save report to file? (y/n): n
+
+What do you want to do?
+  (1) Summarize a file [Template-based]
+  (2) Summarize a file [ML-based]
+  (3) Summarize a directory [Template-based]
+  (4) Summarize a directory [ML-based]
+  (5) Exit
+
+Enter your choice: 1
+Enter file path: C:\SHASHANK\CD\Project\examples\example1.py
+
+======================================================================
+🔍 Analyzing code with AST...
+🔒 Scanning for security issues...
+📝 Generating summary...
+📊 Creating final report...
+======================================================================
+🔍 CODE ANALYSIS REPORT
+======================================================================
+
+📋 SUMMARY
+----------------------------------------------------------------------
+A Python module that contains 4 functions and 1 class and low complexity and executable script and JSON data handling.
+
+📊 STATISTICS
+----------------------------------------------------------------------
+   - Functions: 4
+   - Classes: 1
+   - Imports: 4
+   - Lines of Code: 32
+
+⚙️ COMPLEXITY ANALYSIS
+----------------------------------------------------------------------
+   - Cyclomatic Complexity: 2
+   - Cognitive Complexity: 1
+   - Maintainability Index: 100.0
+   - Level: LOW
+
+🔧 FUNCTIONS
+----------------------------------------------------------------------
+   • get_user_endpoint(user_id)
+   • __init__(self, db_name)
+   • connect(self)
+   • get_user(self, user_id)
+
+🔒 SECURITY AUDIT
+----------------------------------------------------------------------
+   Security Score: 100/100
+   ⚠️ HIGH RISK: exec
+
+   💡 Recommendations:
+      • ⚠️ High-risk functions detected: exec. Consider using safer alternatives or adding input validation.
+
+======================================================================
+
+💾 Save report to file? (y/n): n
+
+What do you want to do?
+  (1) Summarize a file [Template-based]
+  (2) Summarize a file [ML-based]
+  (3) Summarize a directory [Template-based]
+  (4) Summarize a directory [ML-based]
+  (5) Exit
+
+Enter your choice: 2
+Enter file path: C:\SHASHANK\CD\Project\examples\example7.py
+
+======================================================================
+🔍 Analyzing code with AST...
+🔒 Scanning for security issues...
+📝 Generating summary...
+   🤖 Sending to ML: This Python code performs mathematical calculations. It contains functions: factorial and classes: .
+
+Describe what this code does in 2-3 sentences:...
+📊 Creating final report...
+======================================================================
+🔍 CODE ANALYSIS REPORT
+======================================================================
+
+📋 SUMMARY
+----------------------------------------------------------------------
+This Python code performs mathematical calculations. it contains functions: factorial and classes:.
+
+📊 STATISTICS
+----------------------------------------------------------------------
+   - Functions: 1
+   - Classes: 0
+   - Imports: 0
+   - Lines of Code: 11
+
+⚙️ COMPLEXITY ANALYSIS
+----------------------------------------------------------------------
+   - Cyclomatic Complexity: 5
+   - Cognitive Complexity: 3
+   - Maintainability Index: 100.0
+   - Level: LOW
+
+🔧 FUNCTIONS
+----------------------------------------------------------------------
+   • factorial(n)
+
+🔒 SECURITY AUDIT
+----------------------------------------------------------------------
+   Security Score: 100/100
+
+======================================================================
+
+💾 Save report to file? (y/n): n
+
+What do you want to do?
+  (1) Summarize a file [Template-based]
+  (2) Summarize a file [ML-based]
+  (3) Summarize a directory [Template-based]
+  (4) Summarize a directory [ML-based]
+  (5) Exit
+
+Enter your choice: 2
+Enter file path: C:\SHASHANK\CD\Project\examples\example1.py
+
+======================================================================
+🔍 Analyzing code with AST...
+🔒 Scanning for security issues...
+📝 Generating summary...
+   🤖 Sending to ML: This Python code performs web application with API endpoints, database operations, JSON data handling, ⚠️ WARNING: dynamic code execution,, ⚠️ POTENTIAL SQL INJECTION VULNERABILITY. It contains functio...
+📊 Creating final report...
+======================================================================
+🔍 CODE ANALYSIS REPORT
+======================================================================
+
+📋 SUMMARY
+----------------------------------------------------------------------
+This Python code performs web application with API endpoints, database operations, JSON data handling. it contains functions: get_user_endpoint, __init__, connect, get_user and classes: DatabaseManager.
+
+📊 STATISTICS
+----------------------------------------------------------------------
+   - Functions: 4
+   - Classes: 1
+   - Imports: 4
+   - Lines of Code: 32
+
+⚙️ COMPLEXITY ANALYSIS
+----------------------------------------------------------------------
+   - Cyclomatic Complexity: 2
+   - Cognitive Complexity: 1
+   - Maintainability Index: 100.0
+   - Level: LOW
+
+🔧 FUNCTIONS
+----------------------------------------------------------------------
+   • get_user_endpoint(user_id)
+   • __init__(self, db_name)
+   • connect(self)
+   • get_user(self, user_id)
+
+🔒 SECURITY AUDIT
+----------------------------------------------------------------------
+   Security Score: 100/100
+   ⚠️ HIGH RISK: exec
+
+   💡 Recommendations:
+      • ⚠️ High-risk functions detected: exec. Consider using safer alternatives or adding input validation.
+
+======================================================================
+
+💾 Save report to file? (y/n): n
+
+
+
+
+Model	BLEU-4	ROUGE-L	METEOR
+AST-only	0.28	0.42	0.35
+NLP-only	0.33	0.48	0.40
+Ours (Hybrid)	0.42	0.58	0.51

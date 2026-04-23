@@ -1,0 +1,44 @@
+======================================================================
+🔍 CODE ANALYSIS REPORT
+======================================================================
+
+📋 SUMMARY
+----------------------------------------------------------------------
+ML model not available - using template mode
+
+📊 STATISTICS
+----------------------------------------------------------------------
+   - Functions: 18
+   - Classes: 4
+   - Imports: 7
+   - Lines of Code: 165
+
+⚙️ COMPLEXITY ANALYSIS
+----------------------------------------------------------------------
+   - Cyclomatic Complexity: 15
+   - Cognitive Complexity: 47
+   - Maintainability Index: 70.8
+   - Level: HIGH
+
+🔧 FUNCTIONS
+----------------------------------------------------------------------
+   • memoize_with_lru(capacity)
+   • expensive_computation(x)
+   • generate_tasks(n)
+   • main()
+   • __init__(self, capacity)
+   • get(self, key)
+   • put(self, key, value)
+   • decorator(func)
+   • __init__(self, task_queue, result_queue, worker_id)
+   • run(self)
+
+🔒 SECURITY AUDIT
+----------------------------------------------------------------------
+   Security Score: 97/100
+   ⚠️ MEDIUM RISK: open, open
+
+   💡 Recommendations:
+      • Medium-risk operations found: open, open. Ensure proper error handling and access controls.
+
+======================================================================

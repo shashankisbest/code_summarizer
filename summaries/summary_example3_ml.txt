@@ -1,0 +1,63 @@
+======================================================================
+🤖 ML-BASED CODE SUMMARY
+======================================================================
+
+File: C:\SHASHANK\CD\Project\examples\example3.py
+
+📋 ML-GENERATED SUMMARY:
+   pd from sklearn.linear_model import LinearRegression.metrics import mean_squared_error def split_data(df, target_column]: X = drf.drop(columbns=[target_container]) y = model = linearregression
+
+
+----------------------------------------------------------------------
+📋 TEMPLATE-BASED ANALYSIS (for comparison):
+----------------------------------------------------------------------
+CODE SUMMARY REPORT
+======================================================================
+
+
+
+---->PURPOSE<----
+   None
+
+
+
+---->STATISTICS<----
+   - Functions: 4
+   - Classes: 1
+   - Imports: 3
+
+
+
+---->COMPLEXITY ANALYSIS<----
+   - Conditional statements (if): 0
+   - Loops (for/while): 0
+   - Exception handling (try/except): 0
+
+
+
+---->DEPENDENCIES<----
+   - pandas
+   - sklearn.linear_model.LinearRegression
+   - sklearn.metrics.mean_squared_error
+
+
+
+---->CLASSES<----
+   • the classModelEvaluator exists with 2 methods inside it named ['__init__', 'evaluate']
+
+
+
+---->FUNCTIONS<----
+   • the function split_data operates on ['df', 'target_column']
+   • the function train_model operates on ['X', 'y']
+   • the function __init__ operates on ['self', 'model']
+   • the function evaluate operates on ['self', 'X_test', 'y_test']
+
+
+
+---->🔒 AUDIT NOTES<----
+   - ⚠️  CRITICAL: Uses eval/exec - high security risk
+
+
+
+======================================================================

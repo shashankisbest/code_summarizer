@@ -1,0 +1,94 @@
+======================================================================
+🤖 ML-BASED CODE SUMMARY
+======================================================================
+
+File: C:\SHASHANK\CD\Project\examples\example6.py
+
+📋 ML-GENERATED SUMMARY:
+   Is used to get the current value of a variable from the stack.
+"""
+
+
+class TestStack(unittest.TestCase):
+    def test_get(self):
+        self.assertEqual(get('foo'), 'bar')
+        get = 'foo'
+        stack = get_variable_by_name(None, get)
+        # print(stack.get())
+        print("get =
+
+
+----------------------------------------------------------------------
+📋 TEMPLATE-BASED ANALYSIS (for comparison):
+----------------------------------------------------------------------
+CODE SUMMARY REPORT
+======================================================================
+
+
+
+---->PURPOSE<----
+   None
+
+
+
+---->STATISTICS<----
+   - Functions: 18
+   - Classes: 4
+   - Imports: 7
+
+
+
+---->COMPLEXITY ANALYSIS<----
+   - Conditional statements (if): 6
+   - Loops (for/while): 7
+   - Exception handling (try/except): 1
+
+
+
+---->DEPENDENCIES<----
+   - threading
+   - queue
+   - time
+   - random
+   - math
+   - functools
+   - json
+
+
+
+---->CLASSES<----
+   • the classLRUCache exists with 3 methods inside it named ['__init__', 'get', 'put']
+   • the classWorker exists with 2 methods inside it named ['__init__', 'run']
+   • the classDataPipeline exists with 3 methods inside it named ['__init__', 'add_tasks', 'run']
+   • the classResultAnalyzer exists with 4 methods inside it named ['__init__', 'statistics', 'group_by_worker', 'export_json']
+
+
+
+---->FUNCTIONS<----
+   • the function memoize_with_lru operates on ['capacity']
+   • the function expensive_computation operates on ['x']
+   • the function generate_tasks operates on ['n']
+   • the function main operates on no parameters. 
+   • the function __init__ operates on ['self', 'capacity']
+   • the function get operates on ['self', 'key']
+   • the function put operates on ['self', 'key', 'value']
+   • the function decorator operates on ['func']
+   • the function __init__ operates on ['self', 'task_queue', 'result_queue', 'worker_id']
+   • the function run operates on ['self']
+   • the function __init__ operates on ['self', 'num_workers']
+   • the function add_tasks operates on ['self', 'tasks']
+   • the function run operates on ['self']
+   • the function __init__ operates on ['self', 'results']
+   • the function statistics operates on ['self']
+   • the function group_by_worker operates on ['self']
+   • the function export_json operates on ['self', 'path']
+   • the function wrapper operates on no parameters. 
+
+
+
+---->🔒 AUDIT NOTES<----
+   - No obvious security concerns detected in imports
+
+
+
+======================================================================

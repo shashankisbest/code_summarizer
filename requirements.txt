@@ -1,0 +1,14 @@
+astor
+nltk
+graphviz
+transformers
+torch
+sentencepiece
+protobuf
+
+# testing framework
+pytest
+pytest-cov
+
+datasets
+accelerate
